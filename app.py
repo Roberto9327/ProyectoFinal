@@ -1,7 +1,7 @@
 import streamlit as st
 from data_processing import cargar_datos, limpiar_y_preparar_datos
 
-st.title('Análisis de Datos de Vinos')
+st.title('Análisis de Datos')
 
 st.sidebar.title('Opciones')
 
