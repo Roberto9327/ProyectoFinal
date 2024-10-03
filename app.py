@@ -1,39 +1,29 @@
 import streamlit as st
-from pages.cluster_jerarquico import cluster_jerarquico
-from pages.tsne import tsne_visualization
-from pages.data_processing import procesar_datos
-from pages.modelos import mostrar_modelos
+from data_processing import cargar_datos, limpiar_y_preparar_datos
 
+st.title('Análisis de Datos de Vinos')
 
-# Función principal para la navegación
-def main():
-    st.sidebar.title("Navegación")
+st.sidebar.title('Opciones')
+
+opciones = ['Cargar datos', 'Clustering Jerárquico', 't-SNE']
+opcion = st.sidebar.selectbox('Seleccione una opción', opciones)
+
+if opcion == 'Cargar datos':
+    st.write("Sube tu archivo CSV o XLSX para iniciar el análisis.")
+    archivo = st.file_uploader('Seleccione un archivo', type=['csv', 'xlsx'])
     
-    # Opciones de la barra lateral
-    opciones = ["Entender los Datos", "Cluster Jerárquico", "t-SNE", "Modelos Implementados"]
-    eleccion = st.sidebar.radio("Ir a:", opciones)
-    
-    # Cargar la página según la selección
-    if eleccion == "Entender los Datos":
-        st.title("Entender, Limpiar y Preparar los Datos")
-        file_path = 'data/dataset.csv'  # Ruta del archivo CSV
-        st.write("Cargando los datos desde:", file_path)
-        data = procesar_datos(file_path)
-        st.write("Datos procesados:")
-        st.write(data)
-    elif eleccion == "Cluster Jerárquico":
-        if 'data' in st.session_state:
-            cluster_jerarquico(st.session_state['data'])
-        else:
-            st.write("No se han cargado datos.")
-    elif eleccion == "t-SNE":
-        if 'data' in st.session_state:
-            tsne_visualization(st.session_state['data'])
-        else:
-            st.write("No se han cargado datos.")
-    elif eleccion == "Modelos Implementados":
-        mostrar_modelos()
-
-# Llamar a la función principal
-if __name__ == "__main__":
-    main()
+    if archivo:
+        st.session_state.df = cargar_datos(archivo)
+        if st.session_state.df is not None:
+            st.success('Datos cargados exitosamente.')
+else:
+    if 'df' in st.session_state:
+        df = limpiar_y_preparar_datos(st.session_state.df)  # Limpiar datos antes de procesar
+        if opcion == 'Clustering Jerárquico':
+            from Cluster_Jerarquico import procesar_cluster
+            procesar_cluster(df)
+        elif opcion == 't-SNE':
+            from t_SNE import procesar_tsne
+            procesar_tsne(df)
+    else:
+        st.warning('No hay datos cargados. Por favor, carga un archivo primero.')
