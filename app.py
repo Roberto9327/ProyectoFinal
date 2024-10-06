@@ -1,11 +1,13 @@
 import streamlit as st
 from data_processing import cargar_datos, limpiar_y_preparar_datos
+from pca import procesar_pca  # Asegúrate de que el archivo pca.py esté en la misma carpeta o ajusta la ruta
 
 st.title('Análisis de Datos')
 
 st.sidebar.title('Opciones')
 
-opciones = ['Cargar datos', 'Clustering Jerárquico', 't-SNE']
+# Añadir PCA a las opciones
+opciones = ['Cargar datos', 'Clustering Jerárquico', 't-SNE', 'PCA']
 opcion = st.sidebar.selectbox('Seleccione una opción', opciones)
 
 if opcion == 'Cargar datos':
@@ -25,5 +27,7 @@ else:
         elif opcion == 't-SNE':
             from t_SNE import procesar_tsne
             procesar_tsne(df)
+        elif opcion == 'PCA':  # Añadir la opción de PCA
+            procesar_pca(df)  # Llamar a la función desde pca.py para procesar y visualizar el PCA
     else:
         st.warning('No hay datos cargados. Por favor, carga un archivo primero.')
